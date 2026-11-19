@@ -14,7 +14,8 @@ public class Balanca_mas_nao_cai_Martin {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
+        // O programa começa pela tela de login
+        view.JFLogin.main(args);
     }
     
 }

@@ -4,17 +4,128 @@
  */
 package view;
 
+import dao.DaoFases;
+import dao.DataSource;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import model.fases;
+
 /**
  *
  * @author martin.biehl
  */
 public class JFFases extends javax.swing.JFrame {
 
+    private final DaoFases dao = new DaoFases(new DataSource());
+
     /**
      * Creates new form JFFases
      */
     public JFFases() {
         initComponents();
+
+        if (JFLogin.usuarioLogado != null) {
+            lblUsuario.setText(JFLogin.usuarioLogado.getNome());
+        }
+
+        btnIncluir.addActionListener(evt -> incluir());
+        btnEditar.addActionListener(evt -> editar());
+        btnExcluir.addActionListener(evt -> excluir());
+        btnSair.addActionListener(evt -> sair());
+        txtBuscar.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                carregarTabela();
+            }
+        });
+
+        carregarTabela();
+    }
+
+    // Preenche a tabela com o que vem do banco (filtrando pelo campo Buscar)
+    private void carregarTabela() {
+        String busca = txtBuscar.getText().trim();
+        ArrayList<fases> lista = busca.isEmpty() ? dao.consulta() : dao.seleciona(busca);
+
+        DefaultTableModel modelo = (DefaultTableModel) tblEngenheiros.getModel();
+        modelo.setRowCount(0);
+
+        for (fases fase : lista) {
+            modelo.addRow(new Object[]{fase.getIdFase(), fase.getDsFase(), ""});
+        }
+    }
+
+    // Devolve o id da linha selecionada, ou -1 se nenhuma estiver selecionada
+    private int idSelecionado() {
+        int linha = tblEngenheiros.getSelectedRow();
+        if (linha < 0) {
+            JOptionPane.showMessageDialog(this, "Selecione uma fase na tabela.");
+            return -1;
+        }
+        return (int) tblEngenheiros.getValueAt(linha, 0);
+    }
+
+    private void incluir() {
+        String descricao = txtNome.getText().trim();
+        if (descricao.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Informe a descrição da fase.");
+            return;
+        }
+
+        fases fase = new fases();
+        fase.setDsFase(descricao);
+
+        if (dao.incluir(fase)) {
+            txtNome.setText("");
+            carregarTabela();
+        }
+    }
+
+    private void editar() {
+        int id = idSelecionado();
+        if (id < 0) {
+            return;
+        }
+
+        fases fase = dao.consultaPorId(id);
+        if (fase == null) {
+            return;
+        }
+
+        String descricao = JOptionPane.showInputDialog(this, "Descrição:", fase.getDsFase());
+        if (descricao == null) {
+            return; // cancelou
+        }
+        if (descricao.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "A descrição não pode ficar em branco.");
+            return;
+        }
+
+        fase.setDsFase(descricao.trim());
+
+        if (dao.alterar(fase)) {
+            carregarTabela();
+        }
+    }
+
+    private void excluir() {
+        int id = idSelecionado();
+        if (id < 0) {
+            return;
+        }
+
+        int resposta = JOptionPane.showConfirmDialog(this, "Excluir a fase nº " + id + "?",
+                "Excluir", JOptionPane.YES_NO_OPTION);
+        if (resposta == JOptionPane.YES_OPTION && dao.excluir(id)) {
+            carregarTabela();
+        }
+    }
+
+    private void sair() {
+        JFLogin.usuarioLogado = null;
+        new JFLogin().setVisible(true);
+        dispose();
     }
 
     /**
@@ -273,7 +384,8 @@ public class JFFases extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnInicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInicioActionPerformed
-        // TODO add your handling code here:
+        new JFInicio().setVisible(true);
+        dispose();
     }//GEN-LAST:event_btnInicioActionPerformed
 
     /**

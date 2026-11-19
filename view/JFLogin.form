@@ -88,7 +88,7 @@
                       <Component id="jScrollPane3" alignment="0" max="32767" attributes="0"/>
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
-                          <Component id="jButton1" min="-2" pref="324" max="-2" attributes="0"/>
+                          <Component id="btEntrar" min="-2" pref="324" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace min="-2" pref="36" max="-2" attributes="0"/>
@@ -109,7 +109,7 @@
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="jScrollPane3" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="39" max="-2" attributes="0"/>
-                  <Component id="jButton1" min="-2" pref="55" max="-2" attributes="0"/>
+                  <Component id="btEntrar" min="-2" pref="55" max="-2" attributes="0"/>
                   <EmptySpace pref="37" max="32767" attributes="0"/>
               </Group>
           </Group>
@@ -131,7 +131,7 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
           <SubComponents>
-            <Component class="javax.swing.JTextPane" name="jTextPane1">
+            <Component class="javax.swing.JTextPane" name="txtEmail">
             </Component>
           </SubComponents>
         </Container>
@@ -158,11 +158,11 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
           <SubComponents>
-            <Component class="javax.swing.JTextPane" name="jTextPane2">
+            <Component class="javax.swing.JTextPane" name="txtSenha">
             </Component>
           </SubComponents>
         </Container>
-        <Component class="javax.swing.JButton" name="jButton1">
+        <Component class="javax.swing.JButton" name="btEntrar">
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="a8" red="0" type="rgb"/>

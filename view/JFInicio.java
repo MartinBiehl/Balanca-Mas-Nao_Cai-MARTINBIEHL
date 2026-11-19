@@ -15,6 +15,13 @@ public class JFInicio extends javax.swing.JFrame {
      */
     public JFInicio() {
         initComponents();
+        setLocationRelativeTo(null);
+    }
+
+    // Abre outra tela e fecha esta
+    private void abrir(javax.swing.JFrame tela) {
+        tela.setVisible(true);
+        dispose();
     }
 
     /**
@@ -32,11 +39,11 @@ public class JFInicio extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
-        jButton6 = new javax.swing.JButton();
+        btEngenheiros = new javax.swing.JButton();
         jPanel6 = new javax.swing.JPanel();
-        jButton7 = new javax.swing.JButton();
+        btFases = new javax.swing.JButton();
         jPanel7 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
+        btFuncoes = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
         jPanel8 = new javax.swing.JPanel();
         jButton4 = new javax.swing.JButton();
@@ -44,7 +51,7 @@ public class JFInicio extends javax.swing.JFrame {
         jButton5 = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
         jPanel11 = new javax.swing.JPanel();
-        jButton2 = new javax.swing.JButton();
+        btUsuarios = new javax.swing.JButton();
 
         jButton3.setBackground(new java.awt.Color(255, 204, 0));
         jButton3.setText("Usuários");
@@ -86,11 +93,11 @@ public class JFInicio extends javax.swing.JFrame {
         jPanel2.setBackground(new java.awt.Color(255, 179, 71));
         jPanel2.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        jButton6.setBackground(new java.awt.Color(255, 204, 0));
-        jButton6.setText("Engenheiros");
-        jButton6.addActionListener(new java.awt.event.ActionListener() {
+        btEngenheiros.setBackground(new java.awt.Color(255, 204, 0));
+        btEngenheiros.setText("Engenheiros");
+        btEngenheiros.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton6ActionPerformed(evt);
+                btEngenheirosActionPerformed(evt);
             }
         });
 
@@ -100,25 +107,25 @@ public class JFInicio extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(4, 4, 4)
-                .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
+                .addComponent(btEngenheiros, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btEngenheiros, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         jPanel6.setBackground(new java.awt.Color(255, 179, 71));
         jPanel6.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        jButton7.setBackground(new java.awt.Color(255, 204, 0));
-        jButton7.setText("Fases");
-        jButton7.addActionListener(new java.awt.event.ActionListener() {
+        btFases.setBackground(new java.awt.Color(255, 204, 0));
+        btFases.setText("Fases");
+        btFases.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton7ActionPerformed(evt);
+                btFasesActionPerformed(evt);
             }
         });
 
@@ -128,25 +135,25 @@ public class JFInicio extends javax.swing.JFrame {
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton7, javax.swing.GroupLayout.DEFAULT_SIZE, 188, Short.MAX_VALUE)
+                .addComponent(btFases, javax.swing.GroupLayout.DEFAULT_SIZE, 188, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton7, javax.swing.GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE)
+                .addComponent(btFases, javax.swing.GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         jPanel7.setBackground(new java.awt.Color(255, 179, 71));
         jPanel7.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        jButton1.setBackground(new java.awt.Color(255, 204, 0));
-        jButton1.setText("Funções");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btFuncoes.setBackground(new java.awt.Color(255, 204, 0));
+        btFuncoes.setText("Funções");
+        btFuncoes.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btFuncoesActionPerformed(evt);
             }
         });
 
@@ -156,14 +163,14 @@ public class JFInicio extends javax.swing.JFrame {
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 188, Short.MAX_VALUE)
+                .addComponent(btFuncoes, javax.swing.GroupLayout.DEFAULT_SIZE, 188, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btFuncoes, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -230,11 +237,11 @@ public class JFInicio extends javax.swing.JFrame {
         jPanel11.setBackground(new java.awt.Color(255, 179, 71));
         jPanel11.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        jButton2.setBackground(new java.awt.Color(255, 204, 0));
-        jButton2.setText("Usuários");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        btUsuarios.setBackground(new java.awt.Color(255, 204, 0));
+        btUsuarios.setText("Usuários");
+        btUsuarios.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                btUsuariosActionPerformed(evt);
             }
         });
 
@@ -242,16 +249,16 @@ public class JFInicio extends javax.swing.JFrame {
         jPanel11.setLayout(jPanel11Layout);
         jPanel11Layout.setHorizontalGroup(
             jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel11Layout.createSequentialGroup()
-                .addGap(16, 16, 16)
-                .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel11Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(btUsuarios, javax.swing.GroupLayout.DEFAULT_SIZE, 188, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel11Layout.setVerticalGroup(
             jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel11Layout.createSequentialGroup()
-                .addGap(16, 16, 16)
-                .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 95, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel11Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(btUsuarios, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -311,13 +318,13 @@ public class JFInicio extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void btFuncoesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btFuncoesActionPerformed
+        abrir(new JFFuncoes());
+    }//GEN-LAST:event_btFuncoesActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
+    private void btUsuariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btUsuariosActionPerformed
+        abrir(new JFUsuarios());
+    }//GEN-LAST:event_btUsuariosActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
@@ -331,13 +338,13 @@ public class JFInicio extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton5ActionPerformed
 
-    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton6ActionPerformed
+    private void btEngenheirosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEngenheirosActionPerformed
+        abrir(new JFengenheiros());
+    }//GEN-LAST:event_btEngenheirosActionPerformed
 
-    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton7ActionPerformed
+    private void btFasesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btFasesActionPerformed
+        abrir(new JFFases());
+    }//GEN-LAST:event_btFasesActionPerformed
 
     /**
      * @param args the command line arguments
@@ -375,13 +382,13 @@ public class JFInicio extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton btEngenheiros;
+    private javax.swing.JButton btFases;
+    private javax.swing.JButton btFuncoes;
+    private javax.swing.JButton btUsuarios;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
-    private javax.swing.JButton jButton7;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -394,6 +401,5 @@ public class JFInicio extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
-    private javax.swing.JPanel jPanel9;
     // End of variables declaration//GEN-END:variables
 }

@@ -4,17 +4,135 @@
  */
 package view;
 
+import dao.Daofuncoes;
+import dao.DataSource;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import model.funcoes;
+
 /**
  *
  * @author martin.biehl
  */
 public class JFFuncoes extends javax.swing.JFrame {
 
+    // Obs.: a janela mostra os componentes terminados em "1"
+    // (pnlTopo1, pnlFundo1, txtNome1, tblEngenheiros1...).
+    private final Daofuncoes dao = new Daofuncoes(new DataSource());
+
     /**
      * Creates new form JFFuncoes
      */
     public JFFuncoes() {
         initComponents();
+
+        if (JFLogin.usuarioLogado != null) {
+            lblUsuario1.setText(JFLogin.usuarioLogado.getNome());
+        }
+
+        btnIncluir1.addActionListener(evt -> incluir());
+        btnEditar1.addActionListener(evt -> editar());
+        btnExcluir1.addActionListener(evt -> excluir());
+        btnSair1.addActionListener(evt -> sair());
+        txtBuscar1.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                carregarTabela();
+            }
+        });
+
+        carregarTabela();
+    }
+
+    // Preenche a tabela com o que vem do banco (filtrando pelo campo Buscar)
+    private void carregarTabela() {
+        String busca = txtBuscar1.getText().trim();
+        ArrayList<funcoes> lista = busca.isEmpty() ? dao.consulta() : dao.seleciona(busca);
+
+        DefaultTableModel modelo = (DefaultTableModel) tblEngenheiros1.getModel();
+        modelo.setRowCount(0);
+
+        for (funcoes funcao : lista) {
+            modelo.addRow(new Object[]{funcao.getIdFuncao(), funcao.getDsFuncao(), ""});
+        }
+    }
+
+    // Devolve o id da linha selecionada, ou -1 se nenhuma estiver selecionada
+    private int idSelecionado() {
+        int linha = tblEngenheiros1.getSelectedRow();
+        if (linha < 0) {
+            JOptionPane.showMessageDialog(this, "Selecione uma função na tabela.");
+            return -1;
+        }
+        return (int) tblEngenheiros1.getValueAt(linha, 0);
+    }
+
+    private void incluir() {
+        String descricao = txtNome1.getText().trim();
+        if (descricao.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Informe a descrição da função.");
+            return;
+        }
+
+        funcoes funcao = new funcoes();
+        funcao.setDsFuncao(descricao);
+
+        if (dao.incluir(funcao)) {
+            txtNome1.setText("");
+            carregarTabela();
+        }
+    }
+
+    private void editar() {
+        int id = idSelecionado();
+        if (id < 0) {
+            return;
+        }
+
+        funcoes funcao = dao.consultaPorId(id);
+        if (funcao == null) {
+            return;
+        }
+
+        String descricao = JOptionPane.showInputDialog(this, "Descrição:", funcao.getDsFuncao());
+        if (descricao == null) {
+            return; // cancelou
+        }
+        if (descricao.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "A descrição não pode ficar em branco.");
+            return;
+        }
+
+        funcao.setDsFuncao(descricao.trim());
+
+        if (dao.alterar(funcao)) {
+            carregarTabela();
+        }
+    }
+
+    private void excluir() {
+        int id = idSelecionado();
+        if (id < 0) {
+            return;
+        }
+
+        int resposta = JOptionPane.showConfirmDialog(this, "Excluir a função nº " + id + "?",
+                "Excluir", JOptionPane.YES_NO_OPTION);
+        if (resposta == JOptionPane.YES_OPTION && dao.excluir(id)) {
+            carregarTabela();
+        }
+    }
+
+    private void sair() {
+        JFLogin.usuarioLogado = null;
+        new JFLogin().setVisible(true);
+        dispose();
+    }
+
+    private void voltarInicio() {
+        new JFInicio().setVisible(true);
+        dispose();
     }
 
     /**
@@ -502,7 +620,7 @@ public class JFFuncoes extends javax.swing.JFrame {
     }//GEN-LAST:event_btnInicioActionPerformed
 
     private void btnInicio1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInicio1ActionPerformed
-        // TODO add your handling code here:
+        voltarInicio();
     }//GEN-LAST:event_btnInicio1ActionPerformed
 
     /**

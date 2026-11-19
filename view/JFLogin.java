@@ -4,17 +4,49 @@
  */
 package view;
 
+import dao.DaoUsuarios;
+import dao.DataSource;
+import javax.swing.JOptionPane;
+import model.usuarios;
+
 /**
  *
  * @author martin.biehl
  */
 public class JFLogin extends javax.swing.JFrame {
 
+    // Usuário que fez login (as outras telas mostram o nome dele no topo)
+    public static usuarios usuarioLogado;
+
     /**
      * Creates new form JFLogin
      */
     public JFLogin() {
         initComponents();
+        setLocationRelativeTo(null);
+        btEntrar.addActionListener(evt -> entrar());
+    }
+
+    private void entrar() {
+        String email = txtEmail.getText().trim();
+        String senha = txtSenha.getText().replaceAll("[\\r\\n]", "");
+
+        if (email.isEmpty() || senha.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Informe o e-mail e a senha.");
+            return;
+        }
+
+        DaoUsuarios dao = new DaoUsuarios(new DataSource());
+        usuarios usuario = dao.autentica(email, senha);
+
+        if (usuario == null) {
+            JOptionPane.showMessageDialog(this, "E-mail ou senha incorretos.");
+            return;
+        }
+
+        usuarioLogado = usuario;
+        new JFInicio().setVisible(true);
+        dispose();
     }
 
     /**
@@ -31,12 +63,12 @@ public class JFLogin extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTextPane1 = new javax.swing.JTextPane();
+        txtEmail = new javax.swing.JTextPane();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jTextPane2 = new javax.swing.JTextPane();
-        jButton1 = new javax.swing.JButton();
+        txtSenha = new javax.swing.JTextPane();
+        btEntrar = new javax.swing.JButton();
 
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
@@ -50,7 +82,7 @@ public class JFLogin extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Sitka Display", 1, 24)); // NOI18N
         jLabel1.setText("Construtora Balança, mas não cai!");
 
-        jScrollPane2.setViewportView(jTextPane1);
+        jScrollPane2.setViewportView(txtEmail);
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel2.setText("E-mail");
@@ -58,10 +90,10 @@ public class JFLogin extends javax.swing.JFrame {
         jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel3.setText("Senha");
 
-        jScrollPane3.setViewportView(jTextPane2);
+        jScrollPane3.setViewportView(txtSenha);
 
-        jButton1.setBackground(new java.awt.Color(0, 168, 255));
-        jButton1.setText("Entrar");
+        btEntrar.setBackground(new java.awt.Color(0, 168, 255));
+        btEntrar.setText("Entrar");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -77,7 +109,7 @@ public class JFLogin extends javax.swing.JFrame {
                     .addComponent(jScrollPane3)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(9, 9, 9)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 324, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btEntrar, javax.swing.GroupLayout.PREFERRED_SIZE, 324, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(36, 36, 36))
         );
         jPanel1Layout.setVerticalGroup(
@@ -94,7 +126,7 @@ public class JFLogin extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(39, 39, 39)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btEntrar, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(37, Short.MAX_VALUE))
         );
 
@@ -154,7 +186,7 @@ public class JFLogin extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton btEntrar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -163,7 +195,7 @@ public class JFLogin extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextPane jTextPane1;
-    private javax.swing.JTextPane jTextPane2;
+    private javax.swing.JTextPane txtEmail;
+    private javax.swing.JTextPane txtSenha;
     // End of variables declaration//GEN-END:variables
 }

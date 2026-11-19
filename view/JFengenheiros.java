@@ -4,17 +4,157 @@
  */
 package view;
 
+import dao.DaoEngenheiros;
+import dao.DataSource;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import model.Engenheiros;
+
 /**
  *
  * @author martin.biehl
  */
 public class JFengenheiros extends javax.swing.JFrame {
 
+    private final DaoEngenheiros dao = new DaoEngenheiros(new DataSource());
+    private static final DateTimeFormatter FORMATO_DATA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
     /**
      * Creates new form JFengenheiros
      */
     public JFengenheiros() {
         initComponents();
+
+        if (JFLogin.usuarioLogado != null) {
+            lblUsuario.setText(JFLogin.usuarioLogado.getNome());
+        }
+
+        btnIncluir.addActionListener(evt -> incluir());
+        btnEditar.addActionListener(evt -> editar());
+        btnExcluir.addActionListener(evt -> excluir());
+        btnSair.addActionListener(evt -> sair());
+        txtBuscar.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                carregarTabela();
+            }
+        });
+
+        carregarTabela();
+    }
+
+    // Preenche a tabela com o que vem do banco (filtrando pelo campo Buscar)
+    private void carregarTabela() {
+        String busca = txtBuscar.getText().trim();
+        ArrayList<Engenheiros> lista = busca.isEmpty() ? dao.consulta() : dao.seleciona(busca);
+
+        DefaultTableModel modelo = (DefaultTableModel) tblEngenheiros.getModel();
+        modelo.setRowCount(0);
+
+        for (Engenheiros engenheiro : lista) {
+            String admissao = engenheiro.getDtAdmissao() == null ? "" : engenheiro.getDtAdmissao().format(FORMATO_DATA);
+            modelo.addRow(new Object[]{
+                engenheiro.getIdEngenheiro(),
+                engenheiro.getDsNome(),
+                "",
+                "",
+                engenheiro.getNrCREA(),
+                admissao
+            });
+        }
+    }
+
+    // Devolve o id da linha selecionada, ou -1 se nenhuma estiver selecionada
+    private int idSelecionado() {
+        int linha = tblEngenheiros.getSelectedRow();
+        if (linha < 0) {
+            JOptionPane.showMessageDialog(this, "Selecione um engenheiro na tabela.");
+            return -1;
+        }
+        return (int) tblEngenheiros.getValueAt(linha, 0);
+    }
+
+    private void incluir() {
+        String nome = newEng.getText().trim();
+        if (nome.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Informe o nome do engenheiro.");
+            return;
+        }
+
+        // CREA e data de admissão são obrigatórios no banco
+        String crea = JOptionPane.showInputDialog(this, "Número do CREA:");
+        if (crea == null) {
+            return; // cancelou
+        }
+        crea = crea.trim();
+        if (crea.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Informe o número do CREA.");
+            return;
+        }
+
+        Engenheiros engenheiro = new Engenheiros();
+        engenheiro.setDsNome(nome);
+        engenheiro.setNrCREA(crea);
+        engenheiro.setDtAdmissao(LocalDate.now());
+
+        if (dao.incluir(engenheiro)) {
+            newEng.setText("");
+            carregarTabela();
+        }
+    }
+
+    private void editar() {
+        int id = idSelecionado();
+        if (id < 0) {
+            return;
+        }
+
+        Engenheiros engenheiro = dao.consultaPorId(id);
+        if (engenheiro == null) {
+            return;
+        }
+
+        String nome = JOptionPane.showInputDialog(this, "Nome:", engenheiro.getDsNome());
+        if (nome == null) {
+            return;
+        }
+        String crea = JOptionPane.showInputDialog(this, "Número do CREA:", engenheiro.getNrCREA());
+        if (crea == null) {
+            return;
+        }
+        if (nome.trim().isEmpty() || crea.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Nome e CREA não podem ficar em branco.");
+            return;
+        }
+
+        engenheiro.setDsNome(nome.trim());
+        engenheiro.setNrCREA(crea.trim());
+
+        if (dao.alterar(engenheiro)) {
+            carregarTabela();
+        }
+    }
+
+    private void excluir() {
+        int id = idSelecionado();
+        if (id < 0) {
+            return;
+        }
+
+        int resposta = JOptionPane.showConfirmDialog(this, "Excluir o engenheiro nº " + id + "?",
+                "Excluir", JOptionPane.YES_NO_OPTION);
+        if (resposta == JOptionPane.YES_OPTION && dao.excluir(id)) {
+            carregarTabela();
+        }
+    }
+
+    private void sair() {
+        JFLogin.usuarioLogado = null;
+        new JFLogin().setVisible(true);
+        dispose();
     }
 
     /**
@@ -37,7 +177,7 @@ public class JFengenheiros extends javax.swing.JFrame {
         pnlNovo = new javax.swing.JPanel();
         lblNovo = new javax.swing.JLabel();
         lblNome = new javax.swing.JLabel();
-        txtNome = new javax.swing.JTextField();
+        newEng = new javax.swing.JTextField();
         btnIncluir = new javax.swing.JButton();
         pnlLista = new javax.swing.JPanel();
         lblBuscar = new javax.swing.JLabel();
@@ -114,7 +254,7 @@ public class JFengenheiros extends javax.swing.JFrame {
         lblNome.setForeground(new java.awt.Color(68, 68, 68));
         lblNome.setText("Nome");
 
-        txtNome.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        newEng.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
 
         btnIncluir.setBackground(new java.awt.Color(30, 136, 229));
         btnIncluir.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -130,7 +270,7 @@ public class JFengenheiros extends javax.swing.JFrame {
                 .addGroup(pnlNovoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblNovo)
                     .addComponent(lblNome)
-                    .addComponent(txtNome, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
+                    .addComponent(newEng, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
                     .addComponent(btnIncluir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(20, 20, 20))
         );
@@ -142,7 +282,7 @@ public class JFengenheiros extends javax.swing.JFrame {
                 .addGap(15, 15, 15)
                 .addComponent(lblNome)
                 .addGap(5, 5, 5)
-                .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(newEng, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(15, 15, 15)
                 .addComponent(btnIncluir, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(20, 20, 20))
@@ -275,7 +415,8 @@ public class JFengenheiros extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnInicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInicioActionPerformed
-        // TODO add your handling code here:
+        new JFInicio().setVisible(true);
+        dispose();
     }//GEN-LAST:event_btnInicioActionPerformed
 
     /**
@@ -327,12 +468,12 @@ public class JFengenheiros extends javax.swing.JFrame {
     private javax.swing.JLabel lblNovo;
     private javax.swing.JLabel lblTitulo;
     private javax.swing.JLabel lblUsuario;
+    private javax.swing.JTextField newEng;
     private javax.swing.JPanel pnlFundo;
     private javax.swing.JPanel pnlLista;
     private javax.swing.JPanel pnlNovo;
     private javax.swing.JPanel pnlTopo;
     private javax.swing.JTable tblEngenheiros;
     private javax.swing.JTextField txtBuscar;
-    private javax.swing.JTextField txtNome;
     // End of variables declaration//GEN-END:variables
 }

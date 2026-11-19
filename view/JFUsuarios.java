@@ -4,17 +4,182 @@
  */
 package view;
 
+import dao.DaoUsuarios;
+import dao.DataSource;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import model.usuarios;
+
 /**
  *
  * @author martin.biehl
  */
 public class JFUsuarios extends javax.swing.JFrame {
 
+    // Campos da tela: txtNome1 = Nome, txtNome3 = E-mail, txtNome2 = Senha
+    private final DaoUsuarios dao = new DaoUsuarios(new DataSource());
+
     /**
      * Creates new form JFUsuarios
      */
     public JFUsuarios() {
         initComponents();
+        setLocationRelativeTo(null);
+
+        if (JFLogin.usuarioLogado != null) {
+            lblUsuario1.setText(JFLogin.usuarioLogado.getNome());
+        }
+
+        btnEditar1.addActionListener(evt -> editar());
+        btnExcluir1.addActionListener(evt -> excluir());
+        btnSair1.addActionListener(evt -> sair());
+        txtBuscar1.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                carregarTabela();
+            }
+        });
+
+        carregarTabela();
+    }
+
+    // Preenche a tabela com o que vem do banco (filtrando pelo campo Buscar)
+    private void carregarTabela() {
+        String busca = txtBuscar1.getText().trim();
+        ArrayList<usuarios> lista = busca.isEmpty() ? dao.consulta() : dao.seleciona(busca);
+
+        DefaultTableModel modelo = (DefaultTableModel) tblEngenheiros1.getModel();
+        modelo.setRowCount(0);
+
+        for (usuarios usuario : lista) {
+            modelo.addRow(new Object[]{usuario.getIdUsuario(), usuario.getNome(), usuario.getEmail()});
+        }
+    }
+
+    // Devolve o id da linha selecionada, ou -1 se nenhuma estiver selecionada
+    private int idSelecionado() {
+        int linha = tblEngenheiros1.getSelectedRow();
+        if (linha < 0) {
+            JOptionPane.showMessageDialog(this, "Selecione um usuário na tabela.");
+            return -1;
+        }
+        return (int) tblEngenheiros1.getValueAt(linha, 0);
+    }
+
+    // Confere os dados antes de gravar. Devolve a mensagem de erro, ou null se estiver tudo certo.
+    private String validar(String nome, String email, String senha, int idUsuario) {
+        if (nome.isEmpty() || email.isEmpty() || senha.isEmpty()) {
+            return "Preencha nome, e-mail e senha.";
+        }
+        if (!email.contains("@")) {
+            return "Informe um e-mail válido.";
+        }
+        if (senha.length() > 12) {
+            return "A senha pode ter no máximo 12 caracteres.";
+        }
+        if (nome.length() > 50 || email.length() > 80) {
+            return "Nome (até 50) ou e-mail (até 80 caracteres) muito longo.";
+        }
+        if (dao.existeEmail(email, idUsuario)) {
+            return "Já existe um usuário com o e-mail " + email + ".";
+        }
+        return null;
+    }
+
+    private void incluir() {
+        String nome = txtNome1.getText().trim();
+        String email = txtNome3.getText().trim();
+        String senha = txtNome2.getText();
+
+        String erro = validar(nome, email, senha, 0);
+        if (erro != null) {
+            JOptionPane.showMessageDialog(this, erro);
+            return;
+        }
+
+        usuarios usuario = new usuarios();
+        usuario.setNome(nome);
+        usuario.setEmail(email);
+        usuario.setSenha(senha);
+
+        if (dao.incluir(usuario)) {
+            txtNome1.setText("");
+            txtNome3.setText("");
+            txtNome2.setText("");
+            carregarTabela();
+        }
+    }
+
+    private void editar() {
+        int id = idSelecionado();
+        if (id < 0) {
+            return;
+        }
+
+        usuarios usuario = dao.consultaPorId(id);
+        if (usuario == null) {
+            return;
+        }
+
+        String nome = JOptionPane.showInputDialog(this, "Nome:", usuario.getNome());
+        if (nome == null) {
+            return; // cancelou
+        }
+        String email = JOptionPane.showInputDialog(this, "E-mail:", usuario.getEmail());
+        if (email == null) {
+            return;
+        }
+        String senha = JOptionPane.showInputDialog(this, "Nova senha (deixe em branco para manter a atual):");
+        if (senha == null) {
+            return;
+        }
+        if (senha.isEmpty()) {
+            senha = usuario.getSenha();
+        }
+
+        String erro = validar(nome.trim(), email.trim(), senha, id);
+        if (erro != null) {
+            JOptionPane.showMessageDialog(this, erro);
+            return;
+        }
+
+        usuario.setNome(nome.trim());
+        usuario.setEmail(email.trim());
+        usuario.setSenha(senha);
+
+        if (dao.alterar(usuario)) {
+            // se alterou o próprio usuário, atualiza o nome no topo
+            if (JFLogin.usuarioLogado != null && JFLogin.usuarioLogado.getIdUsuario() == id) {
+                JFLogin.usuarioLogado = usuario;
+                lblUsuario1.setText(usuario.getNome());
+            }
+            carregarTabela();
+        }
+    }
+
+    private void excluir() {
+        int id = idSelecionado();
+        if (id < 0) {
+            return;
+        }
+
+        if (JFLogin.usuarioLogado != null && JFLogin.usuarioLogado.getIdUsuario() == id) {
+            JOptionPane.showMessageDialog(this, "Você não pode excluir o usuário com que está logado.");
+            return;
+        }
+
+        int resposta = JOptionPane.showConfirmDialog(this, "Excluir o usuário nº " + id + "?",
+                "Excluir", JOptionPane.YES_NO_OPTION);
+        if (resposta == JOptionPane.YES_OPTION && dao.excluir(id)) {
+            carregarTabela();
+        }
+    }
+
+    private void sair() {
+        JFLogin.usuarioLogado = null;
+        new JFLogin().setVisible(true);
+        dispose();
     }
 
     /**
@@ -324,7 +489,8 @@ public class JFUsuarios extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnInicio1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInicio1ActionPerformed
-        // TODO add your handling code here:
+        new JFInicio().setVisible(true);
+        dispose();
     }//GEN-LAST:event_btnInicio1ActionPerformed
 
     private void txtNome2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNome2ActionPerformed
@@ -336,7 +502,7 @@ public class JFUsuarios extends javax.swing.JFrame {
     }//GEN-LAST:event_txtNome3ActionPerformed
 
     private void btnIncluir1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIncluir1ActionPerformed
-        // TODO add your handling code here:
+        incluir();
     }//GEN-LAST:event_btnIncluir1ActionPerformed
 
     /**
